@@ -51,7 +51,7 @@ ui <- navbarPage(
             margin: 0;
           }
           .input-field {
-            width: 50%;
+            width: 70%;
           }
           .multicol {
             column-count: 2;
@@ -74,64 +74,51 @@ ui <- navbarPage(
              # Sidebar layout with map and inputs
              sidebarLayout(
                mainPanel(
-                 # Input section for geographic coordinates (horizontal layout)
+                 # Combined wellPanel with all input sections
                  wellPanel(
+                   # Input section for geographic coordinates (horizontal layout)
                    tags$h6(class="section-heading", "Geographic Coordinates"),
                    fluidRow(
-                     column(6, div(class="input-field", numericInput("latitude", tags$span(class="input-label", "Latitude (degrees):"), value=40.47, min = -90, max = 90))),
-                     column(6, div(class="input-field", numericInput("longitude", tags$span(class="input-label", "Longitude (degrees):"), value=-86.99, min = -180, max = 180)))
-                   )
-                 ),
-                 
-                 # Input section for selecting corn hybrid type (horizontal layout)
-                 wellPanel(
+                     column(5, div(class="input-field", numericInput("latitude", tags$span(class="input-label", "Latitude (degrees):"), value=40.47, min = -90, max = 90))),
+                     column(7, div(class="input-field", numericInput("longitude", tags$span(class="input-label", "Longitude (degrees):"), value=-86.99, min = -180, max = 180)))
+                   ),
+                   
+                   # Input section for selecting corn hybrid type (horizontal layout)
                    tags$h6(class="section-heading", "Corn Hybrid Type"),
                    fluidRow(
                      column(12, radioButtons("cultivarType", tags$span(class="input-label", "Select Cultivar Type:"),
                                              choices = c("Short Season Hybrid", "Long Season Hybrid"), inline = TRUE))
-                   )
-                 ),
-                 
-                 # Input section for past year agricultural information (horizontal layout)
-                 wellPanel(
+                   ),
+                   
+                   # Input section for past year agricultural information (horizontal layout)
                    tags$h6(class="section-heading", "Previous Year's Agricultural Information"),
                    fluidRow(
-                     column(6, radioButtons("previousCashCrop", tags$span(class="input-label", "Select Previous Cash Crop:"),
+                     column(5, radioButtons("previousCashCrop", tags$span(class="input-label", "Select Previous Cash Crop:"),
                                             choices = c("Corn", "Soybean"), inline = FALSE)),
-                     column(6, div(class="input-field", numericInput("preSeasonNitrogen", 
+                     column(7, div(class="input-field", numericInput("preSeasonNitrogen", 
                                                                      tags$span(class="input-label", "Pre-Season Nitrogen Applied (lbs/acre):"),
                                                                      value = 190)))
-                   )
-                 ),
-                 
-                 # Input section for current year agricultural practices (horizontal layout)
-                 wellPanel(
+                   ),
+                   
+                   # Input section for current year agricultural practices (horizontal layout)
                    tags$h6(class="section-heading", "Current Year's Agricultural Practices"),
                    fluidRow(
-                     column(6, div(class="input-field", selectInput("tillageType", tags$span(class="input-label", "Tillage Practice:"),
-                                                                    choices = c("Conventional", "Strip", "No-till")))),
-                     column(6, div(class="input-field", dateInput("plantingDate", tags$span(class="input-label", "Planting Date:"), value = Sys.Date())))
+                     column(5, div(class="input-field", dateInput("plantingDate", tags$span(class="input-label", "Planting Date:"), value = Sys.Date()))),
+                     column(7, div(class="input-field", numericInput("seedRate", tags$span(class="input-label", "Seed Rate (seeds/acre):"), value = 32000)))
                    ),
-                   fluidRow(
-                     column(6, div(class="input-field", numericInput("seedRate", tags$span(class="input-label", "Seed Rate (seeds/acre):"), value = 32000)))
-                   )
-                 ),
-                 
-                 # Input section for nitrogen application details (horizontal layout)
-                 wellPanel(
+                   
+                   # Input section for nitrogen application details (horizontal layout)
                    tags$h6(class="section-heading", "Nitrogen Application Details"),
                    fluidRow(
-                     column(6, div(class="input-field", dateInput("firstNitrogenAppDate", tags$span(class="input-label", "First Application Date:"), value = Sys.Date()))),
-                     column(6, div(class="input-field", numericInput("firstNitrogenAppAmount", tags$span(class="input-label", "First Application Amount (lbs/acre):"), value = 190)))
+                     column(5, div(class="input-field", dateInput("firstNitrogenAppDate", tags$span(class="input-label", "First Application Date:"), value = Sys.Date()))),
+                     column(7, div(class="input-field", numericInput("firstNitrogenAppAmount", tags$span(class="input-label", "First Application Amount (lbs/acre):"), value = 190)))
                    ),
                    fluidRow(
-                     column(6, div(class="input-field", dateInput("secondNitrogenAppDate", tags$span(class="input-label", "Second Application Date (optional):"), value = Sys.Date()))),
-                     column(6, div(class="input-field", numericInput("secondNitrogenAppAmount", tags$span(class="input-label", "Second Application Amount (lbs/acre) (optional):"), value = 30)))
-                   )
-                 ),
-                 
-                 # output selection for crop-related metrics
-                 wellPanel(
+                     column(5, div(class="input-field", dateInput("secondNitrogenAppDate", tags$span(class="input-label", "Second Application Date:"), value = Sys.Date()))),
+                     column(7, div(class="input-field", numericInput("secondNitrogenAppAmount", tags$span(class="input-label", "Second Application Amount (lbs/acre):"), value = 30)))
+                   ),
+                   
+                   # output selection for crop-related metrics
                    tags$h6(class="section-heading", "Crop Metrics"),
                    div(class="multicol", 
                        checkboxGroupInput("cropOutput", tags$span(class="input-label", "Select Output Metric:"),
@@ -140,20 +127,19 @@ ui <- navbarPage(
                                                       "Corn Nitrogen Uptake" = "cnuptake",
                                                       "Nitrate Leaching" = "no3leaching",
                                                       "Nitrous Oxide Emissions" = "n2oemissions"))
-                   )
-                 ),
-                 
-                 # output selection for soil and weather conditions
-                 wellPanel(
+                   ),
+                   
+                   # output selection for soil and weather conditions
                    tags$h6(class="section-heading", "Soil and Weather Conditions"),
                    fluidRow(
-                     column(6, checkboxGroupInput("soilConditions", tags$span(class="input-label", "Select Soil Conditions:"),
+                     column(5, checkboxGroupInput("soilConditions", tags$span(class="input-label", "Select Soil Conditions:"),
                                                   choices = c("Soil Type", "Drainage Class"))),
-                     column(6, checkboxGroupInput("weatherConditions", tags$span(class="input-label", "Select Weather Conditions:"),
+                     column(7, checkboxGroupInput("weatherConditions", tags$span(class="input-label", "Select Weather Conditions:"),
                                                   choices = c("Cumulative Growing Degree Days", "Cumulative Precipitation")))
                    )
                  ),
                  actionButton("submit", "Submit"), width = 5),
+               
                sidebarPanel(
                  # map output for selecting geographic coordinates
                  leafletOutput("map", width = "75%", height = "300px"),
@@ -184,11 +170,11 @@ ui <- navbarPage(
                             )
                    )
                  )
-                 , width = 7)
+                 , width = 6)
              )
            )
   ),
-  
+
   # Feedback tab
   tabPanel("Feedback",
            fluidPage(
