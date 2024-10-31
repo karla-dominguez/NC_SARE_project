@@ -19,6 +19,7 @@ library(shinyBS)
 library(dplyr)
 library(sf)
 library(soilDB)
+library(sendmailR)
 library(aqp)
 library(sp)
 library(spData)
@@ -175,18 +176,21 @@ ui <- navbarPage(
            )
   ),
 
-  # Feedback tab
+  # feedback tab
   tabPanel("Feedback",
            fluidPage(
              h4("Feedback"),
              
-             # Input fields for feedback form
+             # input fields for feedback form
              textInput("name", "Name:", value = ""),
              textInput("email", "Email:", value = ""),
              textAreaInput("comments", "Comments/Feedback:", value = "", width = "100%", height = "150px"),
              
-             # Submit button
-             actionButton("submitFeedback", "Submit")
+             # submit button
+             actionButton("submitFeedback", "Submit"),
+             
+             # confirmation message
+             textOutput("confirmation")
            )
   )
 )
@@ -213,6 +217,40 @@ server <- function(input, output, session) {
     leafletProxy("map") %>%
       clearMarkers() %>%
       addMarkers(lng = lng, lat = lat)
+  })
+  
+  # submit button on feedback is clicked
+  observeEvent(input$submitFeedback, {
+    # email details
+    sender <- paste("<", input$email, ">", sep = "")
+    recipient <- Sys.getenv("EMAIL_ADDRESS")  # calls from .Renviron file
+    subject <- paste("Feedback from", input$name)
+    body <- paste("Name:", input$name,
+                  "\nEmail:", input$email,
+                  "\nComments:", input$comments)
+    
+    # mail control list using environment variables
+    mailControl <- list(smtpServer = "smtp.gmail.com", # SMTP server
+                        port = 465,
+                        user = Sys.getenv("EMAIL_ADDRESS"),
+                        passwd = Sys.getenv("EMAIL_PASSWORD"),
+                        ssl = TRUE)
+    
+    # try to send email 
+    tryCatch({
+      sendmail(from = sender,
+               to = recipient,
+               subject = subject,
+               msg = body,
+               control = mailControl)
+      
+      # confirmation message
+      output$confirmation <- renderText("Thanks for your feedback!")
+      
+    }, error = function(e) {
+      output$confirmation <- renderText("There was an error sending your feedback. Please try again later.")
+      print(e)
+    })
   })
   #============================================================================map interaction ends here
   observeEvent(input$submit, {
